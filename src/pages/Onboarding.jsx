@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import { getUserStorageKey, setUserData } from "../utils/storage";
 import "../styles/ui.css";
 
@@ -9,7 +8,6 @@ const STORAGE_KEY_PREFERENCES = "user_preferences";
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [preferences, setPreferences] = useState({
     userType: "", // "individual" | "business" | "both"

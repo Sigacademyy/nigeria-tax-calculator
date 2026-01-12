@@ -436,6 +436,27 @@ export default function ExpenseTracking() {
 
   return (
     <div className="expense-tracking-container" style={{ marginTop: "24px", marginBottom: "24px", maxWidth: "1400px", marginLeft: "auto", marginRight: "auto", padding: "24px" }}>
+      {/* Business/LLC Only Notice */}
+      <div style={{
+        backgroundColor: "var(--bg-info-soft)",
+        border: "1px solid var(--border-info)",
+        borderRadius: "8px",
+        padding: "16px",
+        marginBottom: "24px",
+        fontSize: "14px",
+        color: "var(--text-info)",
+        lineHeight: "1.6",
+        transition: "background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease",
+      }}>
+        <div style={{ fontWeight: 600, marginBottom: "6px", display: "flex", alignItems: "center", gap: "6px" }}>
+          <span>ℹ️</span>
+          <span>Business / LLC Only</span>
+        </div>
+        <div>
+          This expense tracker is designed specifically for <strong>Business / LLC</strong> tax calculations. The expenses tracked here will be automatically synced to your Business / LLC tax calculations page.
+        </div>
+      </div>
+
       {/* Header with title and actions */}
       <div style={{ marginBottom: "24px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>

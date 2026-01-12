@@ -1,19 +1,10 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { NavLink } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isAuthenticated, user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-    setIsMobileMenuOpen(false);
-  };
 
   return (
     <nav
@@ -56,12 +47,6 @@ export default function Navbar() {
           Nigeria Tax Calculator
         </NavLink>
 
-        {isAuthenticated && (
-          <div style={{ fontSize: "14px", color: "var(--text-muted)", marginRight: "auto", marginLeft: "16px" }}>
-            {user?.username}
-          </div>
-        )}
-
         {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
@@ -91,79 +76,53 @@ export default function Navbar() {
         </button>
 
         {/* Navigation Links - Desktop */}
-        {isAuthenticated && (
-          <div
-            className="nav-links-desktop"
-            style={{
-              display: "flex",
-              gap: "20px",
-              alignItems: "center",
-            }}
-          >
-            <NavLink to="/" style={navStyle}>
-              Home
-            </NavLink>
+        <div
+          className="nav-links-desktop"
+          style={{
+            display: "flex",
+            gap: "20px",
+            alignItems: "center",
+          }}
+        >
+          <NavLink to="/" style={navStyle}>
+            Home
+          </NavLink>
 
-            <NavLink to="/individual" style={navStyle}>
-              Individual (PIT)
-            </NavLink>
+          <NavLink to="/individual" style={navStyle}>
+            Individual (PIT)
+          </NavLink>
 
-            <NavLink to="/business" style={navStyle}>
-              Business / LLC
-            </NavLink>
+          <NavLink to="/business" style={navStyle}>
+            Business / LLC
+          </NavLink>
 
-            <NavLink to="/expense-tracking" style={navStyle}>
-              Expense Tracking
-            </NavLink>
-
-            <button
-              onClick={handleLogout}
-              style={{
-                background: "none",
-                border: "none",
-                color: "#ef4444",
-                fontWeight: 600,
-                cursor: "pointer",
-                fontSize: "14px",
-                padding: "4px 8px",
-                transition: "opacity 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = "0.8";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = "1";
-              }}
-            >
-              Logout
-            </button>
-          </div>
-        )}
+          <NavLink to="/expense-tracking" style={navStyle}>
+            Expense Tracking
+          </NavLink>
+        </div>
 
         {/* Mobile Menu Button */}
-        {isAuthenticated && (
-          <button
-            className="mobile-menu-button"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            style={{
-              display: "none",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: "8px",
-              fontSize: "24px",
-              color: "var(--text-main)",
-              transition: "color 0.3s ease",
-            }}
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? "✕" : "☰"}
-          </button>
-        )}
+        <button
+          className="mobile-menu-button"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          style={{
+            display: "none",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: "8px",
+            fontSize: "24px",
+            color: "var(--text-main)",
+            transition: "color 0.3s ease",
+          }}
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? "✕" : "☰"}
+        </button>
       </div>
 
       {/* Mobile Navigation Links */}
-      {isMobileMenuOpen && isAuthenticated && (
+      {isMobileMenuOpen && (
         <div
           className="nav-links-mobile"
           style={{
@@ -191,22 +150,6 @@ export default function Navbar() {
           <NavLink to="/expense-tracking" style={navStyle} onClick={() => setIsMobileMenuOpen(false)}>
             Expense Tracking
           </NavLink>
-
-          <button
-            onClick={handleLogout}
-            style={{
-              background: "none",
-              border: "none",
-              color: "#ef4444",
-              fontWeight: 600,
-              cursor: "pointer",
-              fontSize: "14px",
-              textAlign: "left",
-              padding: "8px 0",
-            }}
-          >
-            Logout
-          </button>
         </div>
       )}
     </nav>

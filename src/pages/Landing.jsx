@@ -1,25 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import LoginRegister from "../components/LoginRegister";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth();
 
-  // Show login/register if not authenticated
-  if (!isAuthenticated) {
-    return <LoginRegister />;
-  }
-
-  // Show main content if authenticated
   return (
     <div className="container">
       <div className="card landing-card">
         <span className="badge">Nigeria Tax Act 2025 Compliant</span>
-
-        <div style={{ marginTop: "16px", marginBottom: "8px", fontSize: "14px", color: "#6b7280" }}>
-          Welcome back, <strong>{user?.username}</strong>!
-        </div>
 
         <h1 style={{ marginTop: "16px", fontSize: "40px" }}>
           Simple & Accurate Tax Calculations

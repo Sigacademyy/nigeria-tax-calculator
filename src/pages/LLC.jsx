@@ -65,23 +65,6 @@ function exportToPDF(title, content, filename) {
   }, 250);
 }
 
-function nextMonthDate(day) {
-  const now = new Date();
-  return new Date(
-    now.getFullYear(),
-    now.getMonth() + 1,
-    Math.min(day, 28)
-  ).toLocaleDateString();
-}
-
-function nextYearDate(month, day) {
-  const now = new Date();
-  return new Date(
-    now.getFullYear() + 1,
-    month,
-    Math.min(day, 28)
-  ).toLocaleDateString();
-}
 
 /* ================= STORAGE ================= */
 
@@ -225,13 +208,6 @@ export default function LLC() {
     return sum + amt * rate;
   }, 0);
 
-  const complianceCalendar = [
-    { tax: "VAT", amount: vatPayable, due: nextMonthDate(21) },
-    { tax: "PAYE", amount: totalPAYE, due: nextMonthDate(10) },
-    { tax: "WHT", amount: totalWHT, due: nextMonthDate(21) },
-    { tax: "CIT", amount: citPayable, due: nextYearDate(11, 31) },
-  ];
-
   /* ================= DASHBOARD ================= */
 
   const handleSaveProfile = (profileData) => {
@@ -265,7 +241,6 @@ export default function LLC() {
     { key: "VAT", label: "VAT" },
     { key: "PAYE", label: "PAYE" },
     { key: "WHT", label: "WHT" },
-    { key: "COMPLIANCE", label: "Compliance Calendar" },
   ];
 
   const renderContent = (active) => {
@@ -475,25 +450,15 @@ export default function LLC() {
 
                 <button
                   onClick={() => setSelectedEmployeeIndex(null)}
+                  className="btn-primary"
                   style={{
                     width: "100%",
                     padding: "8px",
-                    backgroundColor: "#6b7280",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
                     fontSize: "12px",
-                    transition: "opacity 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.opacity = "0.8";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.opacity = "1";
+                    fontWeight: 600,
                   }}
                 >
-                  Cancel Edit
+                  Done
                 </button>
               </div>
             )}
@@ -553,13 +518,11 @@ export default function LLC() {
                   return (
                     <div
                       key={i}
-                      onClick={() => setSelectedEmployeeIndex(i)}
                       style={{
                         padding: "12px",
                         backgroundColor: isSelected ? "var(--primary-soft)" : "var(--bg-soft)",
                         border: isSelected ? "2px solid var(--primary)" : "1px solid var(--border)",
                         borderRadius: "8px",
-                        cursor: "pointer",
                         transition: "all 0.2s",
                       }}
                       onMouseEnter={(e) => {
@@ -575,17 +538,67 @@ export default function LLC() {
                         }
                       }}
                     >
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                        <span style={{ fontWeight: 600, fontSize: "14px", color: isSelected ? "var(--primary)" : "var(--text-main)", transition: "color 0.3s ease" }}>
-                          #{i + 1}. {e.name || "Unnamed Employee"}
-                        </span>
-                        {isSelected && <span style={{ fontSize: "12px", color: "var(--primary)", transition: "color 0.3s ease" }}>✓</span>}
-                      </div>
-                      <div style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "4px", transition: "color 0.3s ease" }}>
-                        Salary: ₦{Number(e.salary || 0).toLocaleString()}/month
-                      </div>
-                      <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--primary)", transition: "color 0.3s ease" }}>
-                        {payeView === "monthly" ? "Monthly" : "Annual"} PAYE: ₦{Number(display || 0).toLocaleString()}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "4px" }}>
+                        <div 
+                          onClick={() => setSelectedEmployeeIndex(i)}
+                          style={{ 
+                            flex: 1, 
+                            cursor: "pointer" 
+                          }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                            <span style={{ fontWeight: 600, fontSize: "14px", color: isSelected ? "var(--primary)" : "var(--text-main)", transition: "color 0.3s ease" }}>
+                              #{i + 1}. {e.name || "Unnamed Employee"}
+                            </span>
+                            {isSelected && <span style={{ fontSize: "12px", color: "var(--primary)", transition: "color 0.3s ease" }}>✓</span>}
+                          </div>
+                          <div style={{ fontSize: "12px", color: "var(--text-muted)", marginBottom: "4px", transition: "color 0.3s ease" }}>
+                            Salary: ₦{Number(e.salary || 0).toLocaleString()}/month
+                          </div>
+                          <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--primary)", transition: "color 0.3s ease" }}>
+                            {payeView === "monthly" ? "Monthly" : "Annual"} PAYE: ₦{Number(display || 0).toLocaleString()}
+                          </div>
+                        </div>
+                        <button
+                          onClick={(ev) => {
+                            ev.stopPropagation();
+                            const employeeName = e.name || "this employee";
+                            if (window.confirm(`Are you sure you want to remove ${employeeName}?`)) {
+                              const newEmployees = employees.filter((_, idx) => idx !== i);
+                              setEmployees(newEmployees);
+                              // If the deleted employee was selected, clear selection or select the previous one
+                              if (selectedEmployeeIndex === i) {
+                                if (newEmployees.length > 0) {
+                                  setSelectedEmployeeIndex(Math.max(0, i - 1));
+                                } else {
+                                  setSelectedEmployeeIndex(null);
+                                }
+                              } else if (selectedEmployeeIndex > i) {
+                                setSelectedEmployeeIndex(selectedEmployeeIndex - 1);
+                              }
+                            }
+                          }}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "#ef4444",
+                            cursor: "pointer",
+                            padding: "4px 8px",
+                            fontSize: "16px",
+                            marginLeft: "8px",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                          title="Remove employee"
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = "scale(1.1)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = "scale(1)";
+                          }}
+                        >
+                          🗑️
+                        </button>
                       </div>
                 </div>
               );
@@ -983,6 +996,9 @@ export default function LLC() {
 
     /* ================= WHT ================= */
     if (active === "WHT") {
+      // Check if any vendor has data entered (name or amount)
+      const hasVendorData = vendors.some(v => (v.name && v.name.trim() !== "") || (v.amount && Number(v.amount) > 0));
+      
       return (
         <div className="card">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
@@ -1110,10 +1126,10 @@ export default function LLC() {
             />
           )}
 
-          {/* Share and Scenario Manager */}
-          {totalWHT > 0 && (
+          {/* Share and Scenario Manager - Show at top when data is entered */}
+          {hasVendorData && (
             <>
-              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "16px" }}>
+              <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "16px", marginTop: "20px" }}>
                 <ShareTaxResults
                   taxType="WHT"
                   inputs={{
@@ -1774,26 +1790,6 @@ export default function LLC() {
       );
     }
 
-    /* ================= COMPLIANCE ================= */
-    if (active === "COMPLIANCE") {
-      return (
-        <div className="card">
-          <h3 style={{ color: "var(--text-main)", transition: "color 0.3s ease" }}>Compliance Calendar</h3>
-
-          <table style={{ width: "100%", borderCollapse: "collapse", color: "var(--text-main)", transition: "color 0.3s ease" }}>
-            <tbody>
-              {complianceCalendar.map((c, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid var(--border)", transition: "border-color 0.3s ease" }}>
-                  <td style={{ padding: "8px", color: "var(--text-main)", transition: "color 0.3s ease" }}>{c.tax}</td>
-                  <td style={{ padding: "8px", color: "var(--text-main)", transition: "color 0.3s ease" }}>₦{Number(c.amount || 0).toLocaleString()}</td>
-                  <td style={{ padding: "8px", color: "var(--text-main)", transition: "color 0.3s ease" }}>{c.due}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-    }
   };
 
   // Show modal on first visit if no profile exists (only once per session)
